@@ -116,10 +116,27 @@ renderRecentSearches();
 // === API ===
 const API_BASE = 'https://api.github.com';
 
+// GitHub API token (увеличивает лимит с 60 до 5000 запросов/час)
+// Получить токен: https://github.com/settings/tokens (нужны права только public_repo)
+// Можно указать через localStorage: localStorage.setItem('gh-token', 'ваш_токен')
+function getAuthHeaders() {
+    const token = localStorage.getItem('gh-token') || '';
+    const headers = { Accept: 'application/vnd.github.v3+json' };
+    if (token) {
+        headers.Authorization = `token ${token}`;
+    }
+    return headers;
+}
+
 async function fetchUser(username) {
-    const res = await fetch(`${API_BASE}/users/${encodeURIComponent(username)}`);
+    const res = await fetch(`${API_BASE}/users/${encodeURIComponent(username)}`, {
+        headers: getAuthHeaders()
+    });
     if (res.status === 404) {
         throw new Error(`Пользователь «${username}» не найден`);
+    }
+    if (res.status === 403) {
+        throw new Error(`Превышен лимит запросов к GitHub API. Укажите токен в настройках или подождите час.`);
     }
     if (!res.ok) {
         throw new Error(`Ошибка API: ${res.status} ${res.statusText}`);
@@ -128,7 +145,12 @@ async function fetchUser(username) {
 }
 
 async function fetchRepos(username) {
-    const res = await fetch(`${API_BASE}/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`);
+    const res = await fetch(`${API_BASE}/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`, {
+        headers: getAuthHeaders()
+    });
+    if (res.status === 403) {
+        throw new Error(`Превышен лимит запросов к GitHub API. Укажите токен в настройках или подождите час.`);
+    }
     if (!res.ok) {
         throw new Error(`Не удалось загрузить репозитории для «${username}»`);
     }
