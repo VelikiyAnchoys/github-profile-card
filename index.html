@@ -13,14 +13,17 @@
                 <h1>GitHub Profile Card</h1>
                 <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
             </div>
-            <p class="subtitle">Введите GitHub-юзернейм, чтобы получить карточку профиля</p>
+            <p class="subtitle">Введите GitHub-юзернеймы, чтобы сравнить профили</p>
         </header>
 
         <div class="search-section">
-            <div class="search-box">
-                <input type="text" id="usernameInput" placeholder="Введите GitHub-юзернейм..." autofocus>
-                <button id="searchBtn">Найти</button>
-                <button id="randomBtn" class="random-btn" title="Случайный пользователь">🎲</button>
+            <div class="search-boxes">
+                <div class="search-box">
+                    <input type="text" id="usernameInput1" placeholder="Первый пользователь..." autofocus>
+                    <input type="text" id="usernameInput2" placeholder="Второй пользователь...">
+                    <button id="searchBtn">Сравнить</button>
+                    <button id="randomBtn" class="random-btn" title="Случайные пользователи">🎲</button>
+                </div>
             </div>
             <div id="recentSearches" class="recent-searches hidden">
                 <span class="recent-label">Недавние:</span>
@@ -36,46 +39,96 @@
         <div id="error" class="error hidden"></div>
 
         <div id="result" class="result hidden">
-            <div class="profile-card" id="profileCard">
-                <div class="profile-header">
-                    <img id="avatar" src="" alt="Avatar" class="avatar">
-                    <div class="profile-info">
-                        <h2 id="name" class="name"></h2>
-                        <p id="login" class="login"></p>
-                        <p id="bio" class="bio"></p>
+            <div class="compare-grid">
+                <!-- Первый пользователь -->
+                <div class="user-column" id="userColumn1">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <img id="avatar1" src="" alt="Avatar" class="avatar">
+                            <div class="profile-info">
+                                <h2 id="name1" class="name"></h2>
+                                <p id="login1" class="login"></p>
+                                <p id="bio1" class="bio"></p>
+                            </div>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-value" id="publicRepos1">0</span>
+                                <span class="stat-label">Репозитории</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="followers1">0</span>
+                                <span class="stat-label">Подписчики</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="following1">0</span>
+                                <span class="stat-label">Подписки</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="profile-stats">
-                    <div class="stat">
-                        <span class="stat-value" id="publicRepos">0</span>
-                        <span class="stat-label">Репозитории</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="followers">0</span>
-                        <span class="stat-label">Подписчики</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-value" id="following">0</span>
-                        <span class="stat-label">Подписки</span>
-                    </div>
-                </div>
-            </div>
 
-            <div class="repos-section">
-                <div class="repos-header">
-                    <h3>Репозитории</h3>
-                    <select id="sortSelect" class="sort-select">
-                        <option value="updated">По обновлению</option>
-                        <option value="stars">По звёздам</option>
-                        <option value="created">По дате создания</option>
-                    </select>
-                </div>
-                <div id="reposList" class="repos-list"></div>
-            </div>
+                    <div class="repos-section">
+                        <div class="repos-header">
+                            <h3>Репозитории</h3>
+                            <select class="sort-select" data-user="1">
+                                <option value="updated">По обновлению</option>
+                                <option value="stars">По звёздам</option>
+                                <option value="created">По дате создания</option>
+                            </select>
+                        </div>
+                        <div id="reposList1" class="repos-list"></div>
+                    </div>
 
-            <div class="languages-section" id="languagesSection">
-                <h3>Топ языков</h3>
-                <div id="languagesList" class="languages-list"></div>
+                    <div class="languages-section">
+                        <h3>Топ языков</h3>
+                        <div id="languagesList1" class="languages-list"></div>
+                    </div>
+                </div>
+
+                <!-- Второй пользователь -->
+                <div class="user-column" id="userColumn2">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <img id="avatar2" src="" alt="Avatar" class="avatar">
+                            <div class="profile-info">
+                                <h2 id="name2" class="name"></h2>
+                                <p id="login2" class="login"></p>
+                                <p id="bio2" class="bio"></p>
+                            </div>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <span class="stat-value" id="publicRepos2">0</span>
+                                <span class="stat-label">Репозитории</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="followers2">0</span>
+                                <span class="stat-label">Подписчики</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="following2">0</span>
+                                <span class="stat-label">Подписки</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="repos-section">
+                        <div class="repos-header">
+                            <h3>Репозитории</h3>
+                            <select class="sort-select" data-user="2">
+                                <option value="updated">По обновлению</option>
+                                <option value="stars">По звёздам</option>
+                                <option value="created">По дате создания</option>
+                            </select>
+                        </div>
+                        <div id="reposList2" class="repos-list"></div>
+                    </div>
+
+                    <div class="languages-section">
+                        <h3>Топ языков</h3>
+                        <div id="languagesList2" class="languages-list"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
