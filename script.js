@@ -20,6 +20,60 @@ const recentList = document.getElementById('recentList');
 // === State ===
 let reposData = { 1: [], 2: [] };
 
+// === Token Management ===
+const tokenToggle = document.getElementById('tokenToggle');
+const tokenSection = document.getElementById('tokenSection');
+const tokenInput = document.getElementById('tokenInput');
+const tokenApplyBtn = document.getElementById('tokenApplyBtn');
+const tokenClearBtn = document.getElementById('tokenClearBtn');
+
+function loadToken() {
+    const saved = localStorage.getItem('gh-token') || '';
+    if (saved) {
+        tokenInput.value = saved;
+        tokenInput.placeholder = '✓ Токен сохранён';
+    }
+}
+
+function saveToken(token) {
+    if (token) {
+        localStorage.setItem('gh-token', token);
+        tokenInput.placeholder = '✓ Токен сохранён';
+    } else {
+        localStorage.removeItem('gh-token');
+        tokenInput.placeholder = 'Введите GitHub токен...';
+    }
+    tokenInput.value = token;
+}
+
+tokenToggle.addEventListener('click', () => {
+    tokenSection.classList.toggle('hidden');
+    if (!tokenSection.classList.contains('hidden')) {
+        tokenInput.focus();
+    }
+});
+
+tokenApplyBtn.addEventListener('click', () => {
+    const token = tokenInput.value.trim();
+    if (token) {
+        saveToken(token);
+        tokenSection.classList.add('hidden');
+        showError('✓ Токен сохранён. Лимит увеличен до 5000 запросов/час.');
+        setTimeout(hideError, 3000);
+    }
+});
+
+tokenClearBtn.addEventListener('click', () => {
+    saveToken('');
+    tokenInput.focus();
+});
+
+tokenInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tokenApplyBtn.click();
+});
+
+loadToken();
+
 // === Theme ===
 function initTheme() {
     const saved = localStorage.getItem('gh-theme');

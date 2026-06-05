@@ -11,7 +11,18 @@
         <header class="header">
             <div class="header-top">
                 <h1>GitHub Profile Card</h1>
-                <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
+                <div class="header-actions">
+                    <button id="tokenToggle" class="theme-toggle" title="Настроить GitHub токен">🔑</button>
+                    <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
+                </div>
+            </div>
+            <div id="tokenSection" class="token-section hidden">
+                <div class="token-input-wrapper">
+                    <input type="password" id="tokenInput" placeholder="Введите GitHub токен..." autocomplete="off">
+                    <button id="tokenApplyBtn">Применить</button>
+                    <button id="tokenClearBtn" class="token-clear-btn">✕</button>
+                </div>
+                <p class="token-hint">Токен увеличивает лимит запросов с 60 до 5000/час. <a href="https://github.com/settings/tokens" target="_blank">Создать токен</a> (нужны права <code>public_repo</code>)</p>
             </div>
             <p class="subtitle">Введите GitHub-юзернейм для просмотра профиля</p>
         </header>
