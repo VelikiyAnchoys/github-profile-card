@@ -3,19 +3,21 @@
    ============================================ */
 
 // === DOM References ===
-const usernameInput1 = document.getElementById('usernameInput1');
+const usernameInput = document.getElementById('usernameInput');
 const usernameInput2 = document.getElementById('usernameInput2');
 const searchBtn = document.getElementById('searchBtn');
 const randomBtn = document.getElementById('randomBtn');
+const compareCheckbox = document.getElementById('compareCheckbox');
+const secondUserInput = document.getElementById('secondUserInput');
 const loadingEl = document.getElementById('loading');
 const errorEl = document.getElementById('error');
 const resultEl = document.getElementById('result');
+const profileGrid = document.getElementById('profileGrid');
 const themeToggle = document.getElementById('themeToggle');
 const recentSearches = document.getElementById('recentSearches');
 const recentList = document.getElementById('recentList');
 
 // === State ===
-let currentUsers = { 1: '', 2: '' };
 let reposData = { 1: [], 2: [] };
 
 // === Theme ===
@@ -45,6 +47,17 @@ function toggleTheme() {
 
 themeToggle.addEventListener('click', toggleTheme);
 initTheme();
+
+// === Compare Toggle ===
+compareCheckbox.addEventListener('change', () => {
+    if (compareCheckbox.checked) {
+        secondUserInput.classList.remove('hidden');
+        usernameInput2.focus();
+    } else {
+        secondUserInput.classList.add('hidden');
+        usernameInput2.value = '';
+    }
+});
 
 // === Recent Searches ===
 function getRecentSearches() {
@@ -85,15 +98,16 @@ recentList.addEventListener('click', (e) => {
     const btn = e.target.closest('.recent-item');
     if (!btn) return;
     const username = btn.dataset.username;
-    if (!usernameInput1.value) {
-        usernameInput1.value = username;
-        usernameInput1.focus();
-    } else if (!usernameInput2.value) {
+    if (!usernameInput.value) {
+        usernameInput.value = username;
+        usernameInput.focus();
+    } else if (compareCheckbox.checked && !usernameInput2.value) {
         usernameInput2.value = username;
+        usernameInput2.focus();
     } else {
-        usernameInput1.value = username;
+        usernameInput.value = username;
         usernameInput2.value = '';
-        usernameInput1.focus();
+        usernameInput.focus();
     }
 });
 
@@ -266,11 +280,12 @@ document.querySelectorAll('.sort-select').forEach(select => {
 
 // === Main search ===
 async function searchUsers() {
-    const username1 = usernameInput1.value.trim();
-    const username2 = usernameInput2.value.trim();
+    const username1 = usernameInput.value.trim();
+    const isCompare = compareCheckbox.checked;
+    const username2 = isCompare ? usernameInput2.value.trim() : '';
 
-    if (!username1 && !username2) {
-        showError('Введите хотя бы один GitHub-юзернейм');
+    if (!username1) {
+        showError('Введите GitHub-юзернейм');
         return;
     }
 
@@ -282,13 +297,12 @@ async function searchUsers() {
         // Параллельные запросы
         const promises = [];
 
-        if (username1) {
-            promises.push(
-                fetchUser(username1).then(data => ({ num: 1, data })),
-                fetchRepos(username1).then(data => ({ num: 1, repos: data }))
-            );
-        }
-        if (username2) {
+        promises.push(
+            fetchUser(username1).then(data => ({ num: 1, data })),
+            fetchRepos(username1).then(data => ({ num: 1, repos: data }))
+        );
+
+        if (isCompare && username2) {
             promises.push(
                 fetchUser(username2).then(data => ({ num: 2, data })),
                 fetchRepos(username2).then(data => ({ num: 2, repos: data }))
@@ -307,30 +321,31 @@ async function searchUsers() {
         });
 
         // Сохраняем данные
-        if (username1) {
-            currentUsers[1] = username1;
-            reposData[1] = repoData[1] || [];
-            addRecentSearch(username1);
-        }
-        if (username2) {
-            currentUsers[2] = username2;
+        reposData[1] = repoData[1] || [];
+        addRecentSearch(username1);
+
+        if (isCompare && username2) {
             reposData[2] = repoData[2] || [];
             addRecentSearch(username2);
         }
 
         // Показываем/скрываем колонки
-        document.getElementById('userColumn1').classList.toggle('hidden', !username1);
-        document.getElementById('userColumn2').classList.toggle('hidden', !username2);
+        document.getElementById('userColumn1').classList.remove('hidden');
+        document.getElementById('userColumn2').classList.toggle('hidden', !(isCompare && username2));
 
-        // Рендерим
-        if (username1 && userData[1]) {
+        // Управляем режимом сравнения
+        profileGrid.classList.toggle('compare-mode', isCompare && !!username2);
+
+        // Рендерим первого пользователя
+        if (userData[1]) {
             renderProfile(userData[1], 1);
             const sorted1 = sortRepos(reposData[1], 'updated');
             renderRepos(sorted1, 1);
             renderLanguages(reposData[1], 1);
         }
 
-        if (username2 && userData[2]) {
+        // Рендерим второго пользователя (если есть)
+        if (isCompare && username2 && userData[2]) {
             renderProfile(userData[2], 2);
             const sorted2 = sortRepos(reposData[2], 'updated');
             renderRepos(sorted2, 2);
@@ -361,17 +376,21 @@ function getRandomUsers() {
 
 randomBtn.addEventListener('click', () => {
     const [u1, u2] = getRandomUsers();
-    usernameInput1.value = u1;
-    usernameInput2.value = u2;
+    usernameInput.value = u1;
+    if (compareCheckbox.checked) {
+        usernameInput2.value = u2;
+    } else {
+        usernameInput2.value = '';
+    }
     searchUsers();
 });
 
 // === Event listeners ===
 searchBtn.addEventListener('click', searchUsers);
 
-usernameInput1.addEventListener('keydown', (e) => {
+usernameInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-        if (!usernameInput2.value) {
+        if (compareCheckbox.checked && !usernameInput2.value) {
             usernameInput2.focus();
         } else {
             searchUsers();
