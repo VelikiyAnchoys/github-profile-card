@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Profile Card</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-top">
+                <h1>GitHub Profile Card</h1>
+                <button id="themeToggle" class="theme-toggle" title="Переключить тему">🌙</button>
+            </div>
+            <p class="subtitle">Введите GitHub-юзернейм, чтобы получить карточку профиля</p>
+        </header>
+
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="usernameInput" placeholder="Введите GitHub-юзернейм..." autofocus>
+                <button id="searchBtn">Найти</button>
+                <button id="randomBtn" class="random-btn" title="Случайный пользователь">🎲</button>
+            </div>
+            <div id="recentSearches" class="recent-searches hidden">
+                <span class="recent-label">Недавние:</span>
+                <div id="recentList" class="recent-list"></div>
+            </div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Загружаю...</p>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+
+        <div id="result" class="result hidden">
+            <div class="profile-card" id="profileCard">
+                <div class="profile-header">
+                    <img id="avatar" src="" alt="Avatar" class="avatar">
+                    <div class="profile-info">
+                        <h2 id="name" class="name"></h2>
+                        <p id="login" class="login"></p>
+                        <p id="bio" class="bio"></p>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="publicRepos">0</span>
+                        <span class="stat-label">Репозитории</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="followers">0</span>
+                        <span class="stat-label">Подписчики</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="following">0</span>
+                        <span class="stat-label">Подписки</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="repos-section">
+                <div class="repos-header">
+                    <h3>Репозитории</h3>
+                    <select id="sortSelect" class="sort-select">
+                        <option value="updated">По обновлению</option>
+                        <option value="stars">По звёздам</option>
+                        <option value="created">По дате создания</option>
+                    </select>
+                </div>
+                <div id="reposList" class="repos-list"></div>
+            </div>
+
+            <div class="languages-section" id="languagesSection">
+                <h3>Топ языков</h3>
+                <div id="languagesList" class="languages-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
